@@ -4,11 +4,13 @@ import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 
 import { ColorSchemeScript, MantineProvider, Space } from '@mantine/core';
-import React from "react";
+import React, { useEffect } from "react";
 import { TurboContext, TurboState, useDefaultTurboState } from './lib/context';
 import { SetupModal } from './lib/setup';
 import { MANTINE_THEME } from './lib/style';
 import { ContentLayout } from './navigation';
+import { useDocumentVisibility } from '@mantine/hooks';
+
 
 export default function RootLayout({
   children,
@@ -17,6 +19,14 @@ export default function RootLayout({
 }>) {
 
   const appState: TurboState = useDefaultTurboState();
+
+  useEffect(() => {
+    navigator.serviceWorker.register("/turbo-scout/sw.js").then((registration : any) => {
+      console.log("SW registration successful with scope: ", registration.scope)
+    }, (error : any) => {
+      console.log("SW registration failed: ", error)
+    })
+  }, [])
 
   return (
     <html lang="en">
