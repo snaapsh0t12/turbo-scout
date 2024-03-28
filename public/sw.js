@@ -1,36 +1,60 @@
-
 var cacheName = "turbo-scout";
 
 self.addEventListener("install", (event) => { 
-  self.skipWaiting()
   console.log("sw installed")
   event.waitUntil(
-    caches.open(cacheName)
-      .then((cache) => {
-        var urls = ["/turbo-scout"];
-        console.log("opened cache")
-        return cache.addAll(urls)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    // clear caches
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          return caches.delete(cacheName)
+        })
+      )
+    }).then(() => {
+      console.log("caches cleared")
+      // write caches
+      fetch("./cacheMap.json")
+        .then((result) => {
+          return result.json()
+        })
+        .then((data) => {
+          var {urls} = data
+
+          caches.open(cacheName)
+            .then((cache) => {
+              console.log("opened cache")
+            
+              urls.forEach((url) => {
+                cache.add(url)
+                  .catch((error) => {
+                    console.log("error at url " + url + ":", error)
+                  })
+              })  
+            
+            }) 
+        })
+    })
   )
 });
-/*
+
 self.addEventListener("fetch", (event) => {
   console.log("sw fetch")
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
         if (response) {
+          // cache exists
           return response
-        } else {
+        } else {t
+          // cache doesnt
+          console.log("caches doesn't exist, fetching: ", event.request)
           return fetch(event.request).then(
             (response) => {
               // check if response is valid
               if (!response || response.status !== 200 || response.type !== "basic") {
                 return response
               }
+              else {
               // clone the response so we can both cache and have the browser consume it
               var responseCache = response.clone()
               caches.open(cacheName)
@@ -40,6 +64,7 @@ self.addEventListener("fetch", (event) => {
               )
               
               return response
+              }
             }
           )
         }
@@ -47,18 +72,7 @@ self.addEventListener("fetch", (event) => {
     )
   )
 });
-*/
+
 self.addEventListener("activate", (event) => {
-  clients.claim()
   console.log("sw activated")
-  /*event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          return caches.delete(cacheName)
-        })
-      )
-    })
-  )
-  */
 });
