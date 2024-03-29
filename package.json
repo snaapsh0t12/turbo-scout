@@ -8,7 +8,8 @@
     "build": "next build && npm run postbuild",
     "start": "next start",
     "lint": "next lint",
-    "uninstall": "rimraf out/ && rimraf .next/ && rimraf node_modules/"
+    "uninstall": "rimraf out/ && rimraf .next/ && rimraf node_modules/",
+    "coldstart" : "npm run build && npm run start"
   },
   "dependencies": {
     "@mantine/carousel": "^7.6.2",

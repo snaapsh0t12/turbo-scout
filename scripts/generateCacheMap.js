@@ -2,13 +2,13 @@ const {globSync} = require("glob")
 const fs = require("fs")
 
 const rules = ["out/**/*.*"]
-const ignore = ["**/sw.js"]
+const ignore = ["**/sw.js", "**/*.html", "**/*.txt", "**/_ssgManifest.js", "**/_buildManifest.js"]
 const prefix = "\\turbo-scout" 
-
+    
 const extra =  [
     "\\turbo-scout\\",
-    "\\turbo-scout\\match",
     "\\turbo-scout\\pit",
+    "\\turbo-scout\\match",
     "\\turbo-scout\\view"
 ]
 
